@@ -1,0 +1,119 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Structure for a stack node
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+// Function to check if the stack is empty
+int isEmpty(struct Node* top) {
+    return (top == NULL);
+}
+
+// Push operation
+void push(struct Node** top, int value) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    if (!newNode) {
+        printf("Stack Overflow! Memory allocation failed.\n");
+        return;
+    }
+    newNode->data = value;
+    newNode->next = *top; // Point new node to the previous top
+    *top = newNode;       // Update top
+    printf("%d pushed to stack.\n", value);
+}
+
+// Pop operation
+int pop(struct Node** top) {
+    if (isEmpty(*top)) {
+        printf("Stack Underflow! Cannot pop from an empty stack.\n");
+        return -1; // Indicating stack underflow
+    }
+    struct Node* temp = *top;
+    int poppedValue = temp->data;
+    *top = (*top)->next;
+    free(temp);
+    return poppedValue;
+}
+
+// Peek operation
+int peek(struct Node* top) {
+    if (isEmpty(top)) {
+        printf("Stack is empty. Nothing to peek.\n");
+        return -1;
+    }
+    return top->data;
+}
+
+// Display stack
+void display(struct Node* top) {
+    if (isEmpty(top)) {
+        printf("Stack is empty.\n");
+        return;
+    }
+    printf("Stack elements (top to bottom): ");
+    struct Node* temp = top;
+    while (temp != NULL) {
+        printf("%d ", temp->data);
+        temp = temp->next;
+    }
+    printf("\n");
+}
+
+// Main driver function
+int main() {
+    struct Node* top = NULL;
+    int choice, value;
+
+    while (1) {
+        printf("\n------ Stack Menu ------\n");
+        printf("1. Push\n");
+        printf("2. Pop\n");
+        printf("3. Peek\n");
+        printf("4. isEmpty\n");
+        printf("5. Display Stack\n");
+        printf("6. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter value to push: ");
+                scanf("%d", &value);
+                push(&top, value);
+                break;
+            case 2:
+                value = pop(&top);
+                if (value != -1)
+                    printf("Popped value: %d\n", value);
+                break;
+            case 3:
+                value = peek(top);
+                if (value != -1)
+                    printf("Top element: %d\n", value);
+                break;
+            case 4:
+                if (isEmpty(top))
+                    printf("Stack is empty.\n");
+                else
+                    printf("Stack is NOT empty.\n");
+                break;
+            case 5:
+                display(top);
+                break;
+            case 6:
+                printf("Exiting program.\n");
+                // Free remaining nodes before exiting
+                while (!isEmpty(top)) {
+                    pop(&top);
+                }
+                exit(0);
+            default:
+                printf("Invalid choice! Please try again.\n");
+        }
+    }
+
+    return 0;
+}
